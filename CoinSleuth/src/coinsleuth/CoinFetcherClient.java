@@ -24,16 +24,9 @@ public final class CoinFetcherClient {
                     +  "TRX,XLM,BNB,BSV,ADA,XMR,MIOTA,DASH";
             final String ALLCOINOPTION = "/pricemultifull?fsyms=" 
                     + tickerSymbols +"&tsyms=USD";
-            StringBuilder coinsStringBuilder 
+            String coinsString 
                     =  getURLRequest(SERVERNAME + ALLCOINOPTION + APIKEY);
-            try{
-                PrintWriter pw = new PrintWriter("allCoinInfo.txt");
-                pw.print(coinsStringBuilder.toString());
-                pw.close();
-            }catch(IOException e){
-                System.err.print(e);
-            }
-            return new JSONArray(coinsStringBuilder);
+            return new JSONArray(coinsString);
         }
         
         //data: The unix timestamp of interest 
@@ -47,7 +40,7 @@ public final class CoinFetcherClient {
             return null;
         }
         
-        private StringBuilder getURLRequest(String urlString){
+        private String getURLRequest(String urlString){
             try {
                 URL url = new URL(urlString);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -62,7 +55,7 @@ public final class CoinFetcherClient {
                     streamReader = new InputStreamReader(con.getInputStream());
                 }
                 
-                StringBuilder allCoinString = copyInputStream(streamReader); 
+                String allCoinString = copyInputStream(streamReader).toString().split(",\"DISPLAY")[0]; 
                 con.disconnect();
                 return allCoinString;
                 
@@ -79,7 +72,7 @@ public final class CoinFetcherClient {
                 try (BufferedReader in = new BufferedReader(streamReader)) {
                     String inputLine;
                     content = new StringBuilder();
-                    while ((inputLine = in.readLine()) != null) {
+                    while ((inputLine = in.readLine()) != null ) {
                         content.append(inputLine);
                     }
                 }
