@@ -14,7 +14,9 @@ public class CoinListJUnitTest{
     
     @Test
     public void initializeListTest() {
-        System.out.print(CL.coinList);
         Assert.assertTrue(!CL.coinList.isEmpty());
+        Assert.assertTrue(CL.coinList.get(0).getTICKER() != null);
+        System.out.println(CL.coinList.get(0).getPrice());
+        Assert.assertTrue(CL.coinList.get(0).getPrice()!= 0.0);
     }
 }
