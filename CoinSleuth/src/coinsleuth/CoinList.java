@@ -20,6 +20,8 @@ public class CoinList extends Observable {
     private static final CoinFetcherClient CFC = new CoinFetcherClient();
     public List<Coin> coinList; //Hack fix.
 
+    
+//Initializer establishes update thread.  Updates every 60 seconds.
     public CoinList() {
         coinList = updateCoinList();
         //Updates the List every 60 seconds.
@@ -32,6 +34,9 @@ public class CoinList extends Observable {
 
     }
 
+    //Calls the client and populates the 
+    //coinlist with updated values
+    
     private List<Coin> updateCoinList() {
         List<Coin> result = new LinkedList<>();
         String str = CFC.getAllCoinsJSON();
