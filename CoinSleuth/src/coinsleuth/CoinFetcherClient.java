@@ -13,9 +13,11 @@ import java.net.URL;
  */
 public class CoinFetcherClient {
 
-        final static String SERVERNAME = "https://min-api.cryptocompare.com/data";
-        //final static String APIKEY = "&api_key=1fe77f4b6080bbc249c389035283479" 
-        //        + "bdcfbe5551ef3ebd230ec00cd1951b2c8";
+        //Base url string.
+        final static String SERVERNAME = "https://min-api.cryptocompare.com/data";        
+        
+        //Creates a url to pull the top 15 crypto coins
+        //Then calls url request to grab the data.
         
         public String getAllCoinsJSON(){
             final String tickerSymbols = "BTC,ETH,XRP,LTC,EOS,BCH,USDT,"; 
@@ -29,6 +31,7 @@ public class CoinFetcherClient {
         }
         
         //data: The unix timestamp of interest 
+        //Return the price of a given crypto on a given day.
         
         public String getCoinsJSONHistoric(String Tickers, long date){
             if(date > 0 && Tickers.length() > 1 && Tickers.length() < 6){
@@ -38,6 +41,7 @@ public class CoinFetcherClient {
             return null;
         }
         
+        //Fetches the data from the given url/
         public synchronized String getURLRequest(String urlString){
             try {
                 URL url = new URL(urlString);
@@ -63,6 +67,8 @@ public class CoinFetcherClient {
             return null;
         }
         
+        
+        //Copies the inputstream created by the get request.
         private synchronized StringBuilder copyInputStream(Reader streamReader){
             try{
                 StringBuilder content;
