@@ -21,13 +21,12 @@ public class CoinFetcherClient {
         
         public String getAllCoinsJSON(){
             final String tickerSymbols = "BTC,ETH,XRP,LTC,EOS,BCH,USDT,"; 
-                    //+  "TRX,XLM,BNB,BSV,ADA,XMR,MIOTA,DASH";
+                    +  "TRX,XLM,BNB,BSV,ADA,XMR,MIOTA,DASH";
             final String ALLCOINOPTION = "/pricemultifull?fsyms=" 
                     + tickerSymbols +"&tsyms=USD";
             String coinsString 
                     =  getURLRequest(SERVERNAME + ALLCOINOPTION);
             return coinsString;
-            //.substring(0, coinsString.indexOf(",\"DISPLAY"));
         }
         
         //data: The unix timestamp of interest 
@@ -41,7 +40,7 @@ public class CoinFetcherClient {
             return null;
         }
         
-        //Fetches the data from the given url/
+        //Fetches the data from the given url and returns it as a string.
         public synchronized String getURLRequest(String urlString){
             try {
                 URL url = new URL(urlString);
