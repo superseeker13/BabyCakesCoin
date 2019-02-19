@@ -3,44 +3,42 @@ package coinsleuth;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import org.json.JSONArray;
 
 /**
  *
  * @author Edward Conn
  */
-public final class CoinFetcherClient {
+public class CoinFetcherClient {
 
         final static String SERVERNAME = "https://min-api.cryptocompare.com/data";
-        final static String APIKEY = "&api_key=1fe77f4b6080bbc249c389035283479" 
-                + "bdcfbe5551ef3ebd230ec00cd1951b2c8";
+        //final static String APIKEY = "&api_key=1fe77f4b6080bbc249c389035283479" 
+        //        + "bdcfbe5551ef3ebd230ec00cd1951b2c8";
         
-        public JSONArray getAllCoinsJSON(){
-            final String tickerSymbols = "BTC,ETH,XRP,LTC,EOS,BCH,USDT," 
-                    +  "TRX,XLM,BNB,BSV,ADA,XMR,MIOTA,DASH";
+        public String getAllCoinsJSON(){
+            final String tickerSymbols = "BTC,ETH,XRP,LTC,EOS,BCH,USDT,"; 
+                    //+  "TRX,XLM,BNB,BSV,ADA,XMR,MIOTA,DASH";
             final String ALLCOINOPTION = "/pricemultifull?fsyms=" 
                     + tickerSymbols +"&tsyms=USD";
             String coinsString 
-                    =  getURLRequest(SERVERNAME + ALLCOINOPTION + APIKEY);
-            return new JSONArray(coinsString);
+                    =  getURLRequest(SERVERNAME + ALLCOINOPTION);
+            return coinsString;
+            //.substring(0, coinsString.indexOf(",\"DISPLAY"));
         }
         
         //data: The unix timestamp of interest 
         
-        public JSONArray getSingleCoinJSONHistoric(String Ticker, long date){
-            if(date > 0 && Ticker.length() > 1){
-                String coinOption = "pricehistorical?fsym="+ Ticker 
-                        + "&tsyms=USD&ts=" + date;
-                return new JSONArray(getURLRequest(SERVERNAME + coinOption + APIKEY));
+        public String getCoinsJSONHistoric(String Tickers, long date){
+            if(date > 0 && Tickers.length() > 1 && Tickers.length() < 6){
+                String coinOption = "/pricehistorical?fsym=" + Tickers + "&tsyms=USD&ts=" + date;
+                return getURLRequest(SERVERNAME + coinOption);    
             }
             return null;
         }
         
-        private String getURLRequest(String urlString){
+        public synchronized String getURLRequest(String urlString){
             try {
                 URL url = new URL(urlString);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -55,7 +53,7 @@ public final class CoinFetcherClient {
                     streamReader = new InputStreamReader(con.getInputStream());
                 }
                 
-                String allCoinString = copyInputStream(streamReader).toString().split(",\"DISPLAY")[0]; 
+                String allCoinString = copyInputStream(streamReader).toString();
                 con.disconnect();
                 return allCoinString;
                 
@@ -65,8 +63,7 @@ public final class CoinFetcherClient {
             return null;
         }
         
-        private StringBuilder copyInputStream(Reader streamReader){
-            
+        private synchronized StringBuilder copyInputStream(Reader streamReader){
             try{
                 StringBuilder content;
                 try (BufferedReader in = new BufferedReader(streamReader)) {
