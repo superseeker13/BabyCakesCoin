@@ -15,10 +15,10 @@ public class ObListJUnitTest{
     @Test
     public void initializeCoinListTest() {
         final CoinList CL = new CoinList();
-        System.out.println("Initialized CoinListTest.");
+        //System.out.println("Initialized CoinListTest.");
         Assert.assertTrue(!CL.getObservableList().isEmpty());
         Assert.assertTrue(CL.getObservableList().get(0).getTICKER() != null);
-        System.out.println(CL.getObservableList().get(0).getPrice());
+        //System.out.println(CL.getObservableList().get(0).getPrice());
         Assert.assertTrue(CL.getObservableList().get(0).getPrice()!= 0.0);
     }
     
