@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONArray;
 
 /**
@@ -16,10 +17,18 @@ public class CoinFetcherClient extends JSONFetcherClient {
 
     private final static String CRYPTOURLString = "https://min-api.cryptocompare.com/data";
     private final static String CAPURLString = "https://pro-api.coinmarketcap.com/"
-            + "v1/cryptocurrency/listings/latest/query?CMC_PRO_API_KEY=";
+            + "v1/cryptocurrency/listings/latest";
     private final static String CAPAPIKEY = "b8a79d5d-5160-4442-9e58-a3bd5c32ef97";
-    public static ArrayList<String> NameList;
-    public static ArrayList<String> TickerList;
+    private static ArrayList<String> NameList;
+    private static ArrayList<String> TickerList;
+
+    public static List<String> getNameList() {
+        return NameList;
+    }
+
+    public static List<String> getTickerList() {
+        return TickerList;
+    }
 
     public CoinFetcherClient() {
         String jsString = "";
@@ -37,12 +46,14 @@ public class CoinFetcherClient extends JSONFetcherClient {
         }
     }
 
-    private String TickerListToString(){
+    private String TickerListToString() {
         StringBuilder result = new StringBuilder();
-        TickerList.forEach((ticker) -> {result.append(ticker).append(",");});
+        TickerList.forEach((ticker) -> {
+            result.append(ticker).append(",");
+        });
         return result.toString();
     }
-    
+
     //Returns a string contianing the json info of all coins
     public String getAllCoinsJSON() {
         String TickerSymbols = TickerListToString();
