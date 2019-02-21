@@ -1,85 +1,73 @@
 package coinsleuth;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.net.HttpURLConnection;
+import java.io.UnsupportedEncodingException;
+import org.json.JSONObject;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import org.json.JSONArray;
 
 /**
  *
  * @author Edward Conn
  */
-public final class CoinFetcherClient {
+public class CoinFetcherClient extends JSONFetcherClient {
 
-        final static String SERVERNAME = "https://min-api.cryptocompare.com/data";
-        final static String APIKEY = "&api_key=1fe77f4b6080bbc249c389035283479" 
-                + "bdcfbe5551ef3ebd230ec00cd1951b2c8";
-        
-        public JSONArray getAllCoinsJSON(){
-            final String tickerSymbols = "BTC,ETH,XRP,LTC,EOS,BCH,USDT," 
-                    +  "TRX,XLM,BNB,BSV,ADA,XMR,MIOTA,DASH";
-            final String ALLCOINOPTION = "/pricemultifull?fsyms=" 
-                    + tickerSymbols +"&tsyms=USD";
-            String coinsString 
-                    =  getURLRequest(SERVERNAME + ALLCOINOPTION + APIKEY);
-            return new JSONArray(coinsString);
-        }
-        
-        //data: The unix timestamp of interest 
-        
-        public JSONArray getSingleCoinJSONHistoric(String Ticker, long date){
-            if(date > 0 && Ticker.length() > 1){
-                String coinOption = "pricehistorical?fsym="+ Ticker 
-                        + "&tsyms=USD&ts=" + date;
-                return new JSONArray(getURLRequest(SERVERNAME + coinOption + APIKEY));
-            }
-            return null;
-        }
-        
-        private String getURLRequest(String urlString){
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("GET");
+    private final static String CRYPTOURLString = "https://min-api.cryptocompare.com/data";
+    private final static String CAPURLString = "https://pro-api.coinmarketcap.com/"
+            + "v1/cryptocurrency/listings/latest/query?CMC_PRO_API_KEY=";
+    private final static String CAPAPIKEY = "b8a79d5d-5160-4442-9e58-a3bd5c32ef97";
+    public static ArrayList<String> NameList;
+    public static ArrayList<String> TickerList;
 
-                int status = con.getResponseCode();
-                Reader streamReader;
-                
-                if (status > 299) {
-                    streamReader = new InputStreamReader(con.getErrorStream());
-                } else {
-                    streamReader = new InputStreamReader(con.getInputStream());
-                }
-                
-                String allCoinString = copyInputStream(streamReader).toString().split(",\"DISPLAY")[0]; 
-                con.disconnect();
-                return allCoinString;
-                
-            } catch (IOException e) {
-                System.err.println(e);
-            }
-            return null;
+    public CoinFetcherClient() {
+        String jsString = "";
+        try {
+            jsString = getURLRequest(new URL(CAPURLString), CAPAPIKEY);
+            System.out.println(jsString);//For testing
+        } catch (MalformedURLException ex) {
+            System.err.println(ex);
         }
-        
-        private StringBuilder copyInputStream(Reader streamReader){
-            
-            try{
-                StringBuilder content;
-                try (BufferedReader in = new BufferedReader(streamReader)) {
-                    String inputLine;
-                    content = new StringBuilder();
-                    while ((inputLine = in.readLine()) != null ) {
-                        content.append(inputLine);
-                    }
-                }
-                return content;
-            }catch(IOException e){
-                System.err.println("IOException: " + e);
-            }
-            return null;
+        JSONArray coinInfo = new JSONObject(jsString).getJSONArray("data");
+        for (Object obj : coinInfo) {
+            JSONObject jsObj = (JSONObject) obj;
+            NameList.add(jsObj.getString("name"));
+            TickerList.add(jsObj.getString("symbol"));
         }
     }
+
+    private String TickerListToString(){
+        StringBuilder result = new StringBuilder();
+        TickerList.forEach((ticker) -> {result.append(ticker).append(",");});
+        return result.toString();
+    }
+    
+    //Returns a string contianing the json info of all coins
+    public String getAllCoinsJSON() {
+        String TickerSymbols = TickerListToString();
+        final String ALLCOINOPTION = "/pricemultifull?fsyms="
+                + TickerSymbols + "&tsyms=USD";
+        try {
+            return getURLRequest(new URL(CRYPTOURLString + ALLCOINOPTION));
+        } catch (MalformedURLException ex) {
+            System.out.println(ex);
+        }
+        return null;
+    }
+
+    //Returns a string contianing the json price of one coin
+    //data: The unix timestamp of interest 
+    public String getCoinsJSONHistoric(String Tickers, long date) {
+        if (date > 0 && Tickers.length() > 1 && Tickers.length() < 6) {
+            String coinOption = "/pricehistorical?fsym=" + Tickers
+                    + "&tsyms=USD&ts=" + date;
+            try {
+                return getURLRequest(new URL(CRYPTOURLString + coinOption));
+            } catch (MalformedURLException ex) {
+                System.out.println(ex);
+            }
+        }
+        return null;
+    }
+}
