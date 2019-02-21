@@ -15,6 +15,7 @@ public class ObListJUnitTest{
     @Test
     public void initializeCoinListTest() {
         final CoinList CL = new CoinList();
+        System.out.println("Initialized CoinListTest.");
         Assert.assertTrue(!CL.getObservableList().isEmpty());
         Assert.assertTrue(CL.getObservableList().get(0).getTICKER() != null);
         System.out.println(CL.getObservableList().get(0).getPrice());
@@ -25,8 +26,8 @@ public class ObListJUnitTest{
     public void initializeArticleListTest() {    
         final ArticleList AL = new ArticleList();
         Assert.assertTrue(!AL.getObservableList().isEmpty());
-        System.out.println(AL.getObservableList().get(0).getTitle());
-        System.out.println(AL.getObservableList().get(0).getURL());
+        //System.out.println(AL.getObservableList().get(0).getTitle());
+        //System.out.println(AL.getObservableList().get(0).getURL());
         Assert.assertTrue(AL.getObservableList().get(0).getURL() != null);
     }
 }
