@@ -8,50 +8,35 @@ import org.json.JSONObject;
  */
 public class Coin {
 
-    private final String NAME;
     private final String TICKER;
-    private final long VOLUMEDAY;
+    private final double VOLUMEDAY;
     private final double PRICE;
-    private final long SUPPLY;
+    private final double SUPPLY;
 
-    public Coin(String Name, String Ticker,
-            long volume, double price, long supply) {
-        this.NAME = Name;
+    public Coin(String Ticker, double volume, double price, double supply) {
         this.TICKER = Ticker;
         this.VOLUMEDAY = volume;
         this.PRICE = price;
         this.SUPPLY = supply;
     }
 
-    public Coin(JSONObject jsonObj) {
-        assert jsonObj != null;
-        this.NAME = jsonObj.getString("NAME");
-        
-        this.TICKER = jsonObj.getString("TICKER");
-        this.VOLUMEDAY = jsonObj.getLong("VOLUMEDAY");
+    public Coin(final String TICKER, final JSONObject jsonObj) {
+        this.TICKER = TICKER;
+        this.VOLUMEDAY = jsonObj.getDouble("VOLUMEDAY");
         this.PRICE = jsonObj.getDouble("PRICE");
-        this.SUPPLY = jsonObj.getLong("SUPPLY");
-    }
-
-    @Override
-    public String toString() {
-        return this.NAME + " " + this.TICKER;
+        this.SUPPLY = jsonObj.getDouble("SUPPLY");
     }
 
     public JSONObject toJSON() {
-        return new JSONObject(String.format("{NAME:%s,TICKER:%s,VOLUMEDAY:%d,PRICE:%.4f,SUPPLY%d}",
-                 NAME, TICKER, VOLUMEDAY, PRICE, SUPPLY));
-    }
-
-    public String getNAME() {
-        return NAME;
+        return new JSONObject(String.format("{TICKER:%s,VOLUMEDAY:%d,PRICE:%.4f,SUPPLY%d}",
+                TICKER, VOLUMEDAY, PRICE, SUPPLY));
     }
 
     public String getTICKER() {
         return TICKER;
     }
 
-    public long getVolume() {
+    public double getVolume() {
         return VOLUMEDAY;
     }
 
@@ -59,7 +44,7 @@ public class Coin {
         return PRICE;
     }
 
-    public long getSupply() {
+    public double getSupply() {
         return SUPPLY;
     }
 }
